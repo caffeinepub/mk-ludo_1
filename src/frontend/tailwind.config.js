@@ -17,7 +17,7 @@ export default {
     extend: {
       fontFamily: {
         display: ['"Bricolage Grotesque"', "sans-serif"],
-        body: ['"Cabinet Grotesk"', "sans-serif"],
+        body: ['"Outfit"', '"Cabinet Grotesk"', "sans-serif"],
         mono: ['"Geist Mono"', "monospace"],
       },
       colors: {

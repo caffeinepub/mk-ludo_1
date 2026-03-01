@@ -1,29 +1,43 @@
 # MK Ludo
 
 ## Current State
-The app has four screens: Lobby, Wallet, Battle Room, and Admin Panel. Users register with a username only. The backend `User` and `UserProfile` types have `username`, `accountNumber`, `walletBalance`, and `registeredTimestamp`. The `register(username)` function stores the user without a mobile number. The `RegisterPage.tsx` form only collects username.
+- Dark navy/gold themed Ludo battle site with 5 pages: Lobby, Wallet, Battle Room, Admin, Register
+- Bottom navbar has 3 tabs: Lobby, Wallet, Admin
+- Header shows logo + wallet balance + logout button
+- Lobby shows hero banner image + stats strip + Open Battles list
+- Wallet shows balance card + deposit/withdraw tabs + transaction history
+- No Refer & Earn page, no Profile page, no Support page, no Side Drawer menu
 
 ## Requested Changes (Diff)
 
 ### Add
-- `mobileNumber` field (Text) to the `User` and `UserProfile` backend types
-- `register(username, mobileNumber)` updated function signature to accept mobile number at registration time
-- Mobile number input field in the `RegisterPage.tsx` form (Indian format, 10 digits, validation)
-- `useSaveMobileNumber` mutation hook (optional future use)
+- **Side Drawer menu** (hamburger icon in header) with items: My Profile, Play, My Wallet, Refer and Earn, History, Support, All Policy
+- **Refer & Earn page** (`/refer`): purple-to-blue gradient banner "Refer & Earn", referral code box with COPY button (dashed blue border), WhatsApp share button (green), "Your Performance" section with Referred Players + Referral Earning stat cards
+- **Profile page** (`/profile`): colorful game-character banner with username, mobile number field, email placeholder, KYC status card (green "Verified" badge)
+- **Support page** (`/support`): "Need Help? 24/7" purple banner with customer support image, Contact Us cards for WhatsApp and Email, Call Now card with phone number button
+- **Bottom navbar** expanded to 5 tabs: Home, My Wallet, Refer (center highlighted pill), Support, Profile
+- **Announcement banner** on Home: black bar showing WhatsApp support number
+- **Home game cards**: 2-column grid with "Ludo Classic" card and "Support" card (black bg with game art), LIVE badges on each card
+- **Header**: black background, hamburger menu (left), logo (center), wallet chip (₹balance) + bonus chip (gift icon) side by side (right)
+- **Wallet page redesign**: "My Balance" title + "Total: ₹X.X" pill on top, then two cards — DEPOSIT CASH (green amount, green Add Cash button) and WINNING CASH (red/orange amount, blue Withdraw button) — matching 3Star layout exactly
+- **Winning Cash** concept: track BattleWin transactions separately from deposit balance in the UI (display as separate section in wallet)
 
 ### Modify
-- `register` backend function to accept and store `mobileNumber`
-- `saveCallerUserProfile` to include `mobileNumber`
-- `UserProfile.fromUser` to include `mobileNumber`
-- `RegisterPage.tsx` to add a mobile number input alongside username
-- `useRegister` mutation in `useQueries.ts` to pass `(username, mobileNumber)` to `actor.register`
+- **Layout.tsx**: replace current header with black header matching 3Star style; expand bottom nav to 5 tabs (Home, Wallet, Refer, Support, Profile); add hamburger side drawer
+- **LobbyPage.tsx**: remove hero image banner, add announcement text bar, add 2-column game card grid (Ludo Classic + Support cards with LIVE badge), keep Open Battles + Running Battles sections with exact 3Star card style (white/black cards, "Playing For | PlayerA & PlayerB" header, Entry Fee + Winning Prize layout)
+- **WalletPage.tsx**: redesign to match 3Star My Balance layout with two separate balance cards
 
 ### Remove
-- Nothing
+- Current hero banner image section from LobbyPage
+- Current single wallet balance card (replace with dual DEPOSIT CASH / WINNING CASH cards)
+- Logout button from header (moved to side drawer)
 
 ## Implementation Plan
-1. Update `main.mo`: add `mobileNumber: Text` to `User` and `UserProfile`, update `register`, `saveCallerUserProfile`, and `UserProfile.fromUser`
-2. Regenerate backend bindings via `generate_motoko_code`
-3. Update `RegisterPage.tsx` to show mobile number field with 10-digit Indian phone validation
-4. Update `useRegister` mutation in `useQueries.ts` to accept `{ username, mobileNumber }` and call `actor.register(username, mobileNumber)`
-5. Build and deploy
+1. Add new routes for /refer, /profile, /support in App.tsx
+2. Create ReferPage.tsx with referral code, WhatsApp share, performance stats
+3. Create ProfilePage.tsx with banner, mobile/email fields, KYC status
+4. Create SupportPage.tsx with help banner, WhatsApp/Email/Call cards
+5. Update Layout.tsx: black header with hamburger + logo + dual balance chips, 5-tab bottom nav, side drawer
+6. Update LobbyPage.tsx: announcement bar, 2-col game cards with LIVE badge, 3Star-style battle cards
+7. Update WalletPage.tsx: My Balance header with total pill, DEPOSIT CASH card + WINNING CASH card, Add Cash / Withdraw buttons
+8. Generate MK Ludo logo image for header if needed

@@ -16,7 +16,10 @@ import { useGetMe } from "./hooks/useQueries";
 import AdminPage from "./pages/AdminPage";
 import BattleRoomPage from "./pages/BattleRoomPage";
 import LobbyPage from "./pages/LobbyPage";
+import ProfilePage from "./pages/ProfilePage";
+import ReferPage from "./pages/ReferPage";
 import RegisterPage from "./pages/RegisterPage";
+import SupportPage from "./pages/SupportPage";
 import WalletPage from "./pages/WalletPage";
 
 // Export navigate hook for use in other components
@@ -77,11 +80,32 @@ const adminRoute = createRoute({
   component: AdminPage,
 });
 
+const referRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/refer",
+  component: ReferPage,
+});
+
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile",
+  component: ProfilePage,
+});
+
+const supportRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/support",
+  component: SupportPage,
+});
+
 const routeTree = rootRoute.addChildren([
   lobbyRoute,
   walletRoute,
   battleRoute,
   adminRoute,
+  referRoute,
+  profileRoute,
+  supportRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -100,9 +124,9 @@ export default function App() {
         position="top-center"
         toastOptions={{
           classNames: {
-            toast: "bg-card border-border text-foreground font-body",
-            success: "border-green-500/50",
-            error: "border-red-500/50",
+            toast: "bg-white border-gray-200 text-gray-900 font-body shadow-lg",
+            success: "border-green-300",
+            error: "border-red-300",
           },
         }}
       />

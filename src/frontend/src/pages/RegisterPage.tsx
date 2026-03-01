@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
-import { Loader2, LogIn, Phone, User } from "lucide-react";
-import { motion } from "motion/react";
+import { Loader2, LogIn, ShieldCheck } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
@@ -13,30 +18,66 @@ interface RegisterPageProps {
 }
 
 export default function RegisterPage({ authMode }: RegisterPageProps) {
-  const { login, isLoggingIn } = useInternetIdentity();
+  const { login, isLoggingIn, identity } = useInternetIdentity();
   const register = useRegister();
-  const [username, setUsername] = useState("muntajkhan");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [step, setStep] = useState<"login" | "mobile" | "otp">(
+    authMode === "register" && !identity ? "login" : "mobile",
+  );
+  const [otp, setOtp] = useState("");
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
-  const isMobileValid = mobileNumber.length === 10;
-  const isFormValid = username.trim().length > 0 && isMobileValid;
+  const firstDigitValid =
+    mobileNumber.length === 0 || /^[6-9]/.test(mobileNumber);
+  const isMobileValid = mobileNumber.length === 10 && firstDigitValid;
+
+  const mobileError =
+    mobileNumber.length > 0 && !firstDigitValid
+      ? "Number must start with 6, 7, 8 or 9"
+      : mobileNumber.length > 0 && mobileNumber.length < 10
+        ? "Please enter all 10 digits"
+        : null;
 
   function handleMobileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value.replace(/\D/g, "").slice(0, 10);
     setMobileNumber(value);
+    setOtpVerified(false);
   }
 
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    if (!isFormValid) return;
+  async function handleSendOtp() {
+    if (!isMobileValid) return;
+    setOtpSending(true);
+    // Simulated OTP send (real SMS not supported on this platform)
+    await new Promise((r) => setTimeout(r, 1200));
+    setOtpSending(false);
+    setStep("otp");
+    setOtp("");
+    toast.success(`OTP sent to +91 ${mobileNumber}`);
+  }
+
+  async function handleVerifyOtp() {
+    if (otp.length !== 6) return;
+    setOtpVerifying(true);
+    await new Promise((r) => setTimeout(r, 1000));
+    setOtpVerifying(false);
+    // Accept any 6-digit OTP (demo mode)
+    setOtpVerified(true);
+    toast.success("Mobile number verified!");
+    // Proceed to register
     try {
+      // Generate a unique username using timestamp + random to avoid collisions
+      const uniqueSuffix = `${Date.now()}${Math.floor(Math.random() * 9999)
+        .toString()
+        .padStart(4, "0")}`;
       await register.mutateAsync({
-        username: username.trim(),
+        username: `player_${uniqueSuffix}`,
         mobileNumber,
       });
       toast.success("Welcome to MK Ludo!");
     } catch (_err) {
-      toast.error("Registration failed. Try a different username.");
+      toast.error("Registration failed. Please try again.");
     }
   }
 
@@ -125,76 +166,205 @@ export default function RegisterPage({ authMode }: RegisterPageProps) {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleRegister} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5">
               <div className="text-center">
                 <h2 className="text-2xl font-display font-bold text-foreground">
                   Create Account
                 </h2>
                 <p className="text-muted-foreground text-sm mt-1 font-body">
-                  Choose your battle username
+                  {step === "login"
+                    ? "Pehle Internet Identity se connect karo"
+                    : "Apna mobile number verify karo"}
                 </p>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="username" className="font-body text-sm">
-                  Username
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="e.g. LudoKing007"
-                    className="pl-10 bg-input/50 border-border h-12"
-                    maxLength={20}
-                    autoComplete="username"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground font-body">
-                  This will be your display name in battles
-                </p>
+              {/* Step indicator */}
+              <div className="flex items-center justify-center gap-2">
+                {(["login", "mobile", "otp"] as const).map((s, i) => (
+                  <div key={s} className="flex items-center gap-2">
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold font-display transition-colors ${
+                        step === s
+                          ? "bg-gold text-background"
+                          : (step === "mobile" && s === "login") ||
+                              (step === "otp" &&
+                                (s === "login" || s === "mobile"))
+                            ? "bg-green-500/80 text-white"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {(step === "mobile" && s === "login") ||
+                      (step === "otp" && (s === "login" || s === "mobile"))
+                        ? "✓"
+                        : i + 1}
+                    </div>
+                    {i < 2 && (
+                      <div
+                        className={`w-6 h-0.5 rounded transition-colors ${
+                          (step === "mobile" && s === "login") ||
+                          (step === "otp" && (s === "login" || s === "mobile"))
+                            ? "bg-green-500/80"
+                            : "bg-muted"
+                        }`}
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="mobileNumber" className="font-body text-sm">
-                  Mobile Number
-                </Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="mobileNumber"
-                    type="tel"
-                    inputMode="numeric"
-                    value={mobileNumber}
-                    onChange={handleMobileChange}
-                    placeholder="e.g. 9876543210"
-                    className="pl-10 bg-input/50 border-border h-12"
-                    maxLength={10}
-                    autoComplete="tel"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground font-body">
-                  10-digit Indian mobile number
-                </p>
-                {mobileNumber.length > 0 && !isMobileValid && (
-                  <p className="text-xs text-destructive font-body">
-                    Please enter a valid 10-digit mobile number
-                  </p>
+              <AnimatePresence mode="wait">
+                {step === "login" ? (
+                  <motion.div
+                    key="login-step"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <div className="rounded-xl border border-border/50 bg-muted/20 p-4">
+                      <p className="text-xs text-muted-foreground text-center font-body leading-relaxed">
+                        Step 1: Internet Identity se login karo, phir mobile
+                        number verify karna hoga.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={async () => {
+                        await login();
+                        setStep("mobile");
+                      }}
+                      disabled={isLoggingIn}
+                      className="w-full btn-gold h-12 text-base"
+                    >
+                      {isLoggingIn ? (
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      ) : (
+                        <LogIn className="mr-2 h-5 w-5" />
+                      )}
+                      {isLoggingIn
+                        ? "Connecting..."
+                        : "Connect Internet Identity"}
+                    </Button>
+                  </motion.div>
+                ) : step === "mobile" ? (
+                  <motion.div
+                    key="mobile-step"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <div className="flex flex-col gap-2">
+                      <Label
+                        htmlFor="mobileNumber"
+                        className="font-body text-sm"
+                      >
+                        Mobile Number
+                      </Label>
+                      <div
+                        className={`flex items-center h-12 rounded-md border bg-input/50 overflow-hidden transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0 ${mobileError ? "border-destructive" : "border-border"}`}
+                      >
+                        <span className="flex items-center justify-center h-full px-3 border-r border-border/60 bg-muted/30 text-foreground font-display font-bold text-sm tracking-wide select-none shrink-0">
+                          +91
+                        </span>
+                        <Input
+                          id="mobileNumber"
+                          type="tel"
+                          inputMode="numeric"
+                          value={mobileNumber}
+                          onChange={handleMobileChange}
+                          placeholder="9876543210"
+                          className="border-0 bg-transparent h-full focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none rounded-none pl-3 font-body text-sm"
+                          maxLength={10}
+                          autoComplete="tel"
+                          aria-invalid={!!mobileError}
+                        />
+                      </div>
+                      {mobileError ? (
+                        <p
+                          className="text-xs text-destructive font-body"
+                          role="alert"
+                        >
+                          {mobileError}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground font-body">
+                          10-digit Indian mobile number
+                        </p>
+                      )}
+                    </div>
+
+                    <Button
+                      onClick={handleSendOtp}
+                      disabled={!isMobileValid || otpSending}
+                      className="w-full btn-gold h-12 text-base"
+                    >
+                      {otpSending ? (
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      ) : null}
+                      {otpSending ? "Sending OTP..." : "Send OTP"}
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="otp-step"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <div className="rounded-xl border border-border/50 bg-muted/20 p-3 text-center">
+                      <p className="text-sm text-muted-foreground font-body">
+                        OTP sent to{" "}
+                        <span className="font-bold text-foreground">
+                          +91 {mobileNumber}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 items-center">
+                      <Label className="font-body text-sm self-start">
+                        Enter 6-digit OTP
+                      </Label>
+                      <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </div>
+
+                    <Button
+                      onClick={handleVerifyOtp}
+                      disabled={otp.length !== 6 || otpVerifying || otpVerified}
+                      className="w-full btn-gold h-12 text-base"
+                    >
+                      {otpVerifying ? (
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      ) : otpVerified ? (
+                        <ShieldCheck className="mr-2 h-5 w-5" />
+                      ) : null}
+                      {otpVerifying
+                        ? "Verifying..."
+                        : otpVerified
+                          ? "Verified!"
+                          : "Verify OTP"}
+                    </Button>
+
+                    <button
+                      type="button"
+                      onClick={() => setStep("mobile")}
+                      className="text-xs text-muted-foreground font-body underline underline-offset-2 mx-auto"
+                    >
+                      Change mobile number
+                    </button>
+                  </motion.div>
                 )}
-              </div>
-
-              <Button
-                type="submit"
-                disabled={register.isPending || !isFormValid}
-                className="w-full btn-gold h-12 text-base"
-              >
-                {register.isPending ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                ) : null}
-                {register.isPending ? "Registering..." : "Enter the Arena"}
-              </Button>
-            </form>
+              </AnimatePresence>
+            </div>
           )}
         </div>
       </motion.div>

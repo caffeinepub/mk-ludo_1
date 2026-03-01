@@ -17,77 +17,81 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Outfit";
+  src: url("/assets/fonts/Outfit-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ── Design Tokens ──────────────────────────────────────── */
 @layer base {
   :root {
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
-    /* MK Ludo dark theme — always dark */
-    --background: 0.12 0.015 260;
-    --foreground: 0.94 0.01 90;
+    /* MK Ludo light theme — white/light like 3Star */
+    --background: 0.97 0.002 250;
+    --foreground: 0.12 0.01 260;
 
-    --card: 0.16 0.02 255;
-    --card-foreground: 0.94 0.01 90;
+    --card: 1 0 0;
+    --card-foreground: 0.12 0.01 260;
 
-    --popover: 0.18 0.025 255;
-    --popover-foreground: 0.94 0.01 90;
+    --popover: 1 0 0;
+    --popover-foreground: 0.12 0.01 260;
 
-    /* Gold primary */
-    --primary: 0.82 0.18 85;
-    --primary-foreground: 0.12 0.01 260;
+    /* Green primary */
+    --primary: 0.58 0.18 145;
+    --primary-foreground: 1 0 0;
 
-    /* Navy secondary */
-    --secondary: 0.22 0.035 260;
-    --secondary-foreground: 0.85 0.01 90;
+    /* Light secondary */
+    --secondary: 0.94 0.005 250;
+    --secondary-foreground: 0.2 0.01 260;
 
-    --muted: 0.2 0.02 255;
-    --muted-foreground: 0.6 0.01 260;
+    --muted: 0.94 0.005 250;
+    --muted-foreground: 0.52 0.01 260;
 
-    /* Bright gold accent */
-    --accent: 0.78 0.2 85;
-    --accent-foreground: 0.12 0.01 260;
+    /* Blue accent */
+    --accent: 0.55 0.2 265;
+    --accent-foreground: 1 0 0;
 
     /* Red destructive */
-    --destructive: 0.62 0.23 25;
-    --destructive-foreground: 0.97 0 0;
+    --destructive: 0.58 0.22 25;
+    --destructive-foreground: 1 0 0;
 
     /* Green success */
-    --success: 0.68 0.18 145;
-    --success-foreground: 0.1 0 0;
+    --success: 0.58 0.18 145;
+    --success-foreground: 1 0 0;
 
     /* Amber warning */
     --warning: 0.78 0.18 70;
     --warning-foreground: 0.1 0 0;
 
-    --border: 0.3 0.03 260;
-    --input: 0.22 0.025 260;
-    --ring: 0.82 0.18 85;
+    --border: 0.88 0.005 250;
+    --input: 0.94 0.005 250;
+    --ring: 0.55 0.2 265;
 
-    --chart-1: 0.82 0.18 85;
-    --chart-2: 0.68 0.18 145;
-    --chart-3: 0.62 0.23 25;
+    --chart-1: 0.58 0.18 145;
+    --chart-2: 0.55 0.2 265;
+    --chart-3: 0.58 0.22 25;
     --chart-4: 0.6 0.2 270;
     --chart-5: 0.7 0.15 200;
 
-    --sidebar: 0.14 0.02 260;
-    --sidebar-foreground: 0.94 0.01 90;
-    --sidebar-primary: 0.82 0.18 85;
-    --sidebar-primary-foreground: 0.12 0.01 260;
-    --sidebar-accent: 0.22 0.035 260;
-    --sidebar-accent-foreground: 0.85 0.01 90;
-    --sidebar-border: 0.28 0.03 260;
-    --sidebar-ring: 0.82 0.18 85;
+    --sidebar: 0 0 0;
+    --sidebar-foreground: 1 0 0;
+    --sidebar-primary: 0.58 0.18 145;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.18 0.02 260;
+    --sidebar-accent-foreground: 1 0 0;
+    --sidebar-border: 0.25 0.02 260;
+    --sidebar-ring: 0.58 0.18 145;
 
     /* Custom tokens */
     --gold: 0.82 0.18 85;
-    --gold-bright: 0.88 0.22 88;
-    --gold-dim: 0.65 0.14 80;
-    --navy-deep: 0.1 0.018 265;
-    --navy-mid: 0.16 0.025 260;
-    --navy-light: 0.22 0.035 255;
-    --red-battle: 0.62 0.23 25;
-    --green-win: 0.68 0.18 145;
+    --green-cash: 0.52 0.18 145;
+    --blue-accent: 0.55 0.2 265;
+    --black-header: 0 0 0;
+    --red-battle: 0.58 0.22 25;
   }
 
   * {
@@ -95,26 +99,136 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Cabinet Grotesk", sans-serif;
-    background-image:
-      radial-gradient(ellipse at 20% 20%, oklch(0.2 0.05 270 / 0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, oklch(0.18 0.04 250 / 0.3) 0%, transparent 50%);
-    background-attachment: fixed;
+    font-family: "Outfit", "Cabinet Grotesk", sans-serif;
+    background-color: #f7f7f7;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: "Bricolage Grotesque", sans-serif;
-    font-weight: 800;
+    font-weight: 700;
   }
 }
 
 @layer components {
-  /* Gold shimmer effect */
+  /* App black header */
+  .app-header {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  /* Bottom nav black */
+  .app-bottom-nav {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  /* Active pill in bottom nav */
+  .nav-active-pill {
+    background: #ffffff;
+    color: #000000;
+    border-radius: 9999px;
+    padding: 2px 12px;
+    font-weight: 700;
+  }
+
+  /* Light card */
+  .light-card {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  /* Battle card */
+  .battle-card {
+    @apply transition-all duration-200;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+  }
+  .battle-card:hover {
+    border-color: #c0c0c0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+
+  /* Section header black bar */
+  .section-header-bar {
+    background: #000000;
+    color: #ffffff;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* Green add cash button */
+  .btn-green {
+    background: #16a34a;
+    color: #ffffff;
+    font-weight: 700;
+    font-family: "Outfit", sans-serif;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  .btn-green:hover {
+    background: #15803d;
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.35);
+  }
+
+  /* Blue withdraw button */
+  .btn-blue {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    font-family: "Outfit", sans-serif;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  .btn-blue:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  }
+
+  /* Gold CTA button (kept for compatibility) */
+  .btn-gold {
+    background: linear-gradient(135deg, oklch(0.82 0.2 85), oklch(0.72 0.16 78));
+    color: oklch(0.1 0.01 260);
+    font-weight: 700;
+    font-family: "Bricolage Grotesque", sans-serif;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+  }
+  .btn-gold:hover {
+    background: linear-gradient(135deg, oklch(0.88 0.24 88), oklch(0.78 0.2 82));
+    box-shadow: 0 4px 16px rgba(200, 160, 40, 0.35);
+  }
+
+  /* Amount preset chip */
+  .amount-chip {
+    @apply px-4 py-2 rounded-full border cursor-pointer transition-all duration-200 font-semibold text-sm;
+    border-color: #e0e0e0;
+    background: #f5f5f5;
+    color: #555555;
+  }
+  .amount-chip:hover, .amount-chip.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  /* Glass card (kept for compatibility) */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid #eeeeee;
+  }
+
+  /* Gold shimmer (kept for compatibility) */
   .gold-shimmer {
     background: linear-gradient(
       135deg,
@@ -128,94 +242,53 @@
     background-clip: text;
   }
 
-  /* Battle card glow */
-  .battle-card {
-    @apply transition-all duration-300;
-    border: 1px solid oklch(var(--border));
-  }
-  .battle-card:hover {
-    border-color: oklch(var(--gold) / 0.6);
-    box-shadow: 0 0 20px oklch(var(--gold) / 0.15), 0 4px 24px oklch(0 0 0 / 0.4);
-    transform: translateY(-2px);
-  }
-
-  /* Status badge variants */
+  /* Status badges */
   .badge-open {
-    @apply bg-blue-500/20 text-blue-300 border border-blue-500/40;
+    @apply bg-blue-100 text-blue-700 border border-blue-200;
   }
   .badge-active {
-    @apply bg-green-500/20 text-green-300 border border-green-500/40;
+    @apply bg-green-100 text-green-700 border border-green-200;
   }
   .badge-pending {
-    @apply bg-yellow-500/20 text-yellow-300 border border-yellow-500/40;
+    @apply bg-yellow-100 text-yellow-700 border border-yellow-200;
   }
   .badge-completed {
-    @apply bg-emerald-500/20 text-emerald-300 border border-emerald-500/40;
+    @apply bg-emerald-100 text-emerald-700 border border-emerald-200;
   }
   .badge-disputed {
-    @apply bg-red-500/20 text-red-300 border border-red-500/40;
+    @apply bg-red-100 text-red-700 border border-red-200;
   }
 
-  /* Glass card */
-  .glass-card {
-    background: oklch(var(--card) / 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid oklch(var(--border));
+  /* Marquee animation */
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
   }
-
-  /* Gold CTA button */
-  .btn-gold {
-    background: linear-gradient(135deg, oklch(0.82 0.2 85), oklch(0.72 0.16 78));
-    color: oklch(0.1 0.01 260);
-    font-weight: 700;
-    font-family: "Bricolage Grotesque", sans-serif;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-  }
-  .btn-gold:hover {
-    background: linear-gradient(135deg, oklch(0.88 0.24 88), oklch(0.78 0.2 82));
-    box-shadow: 0 0 24px oklch(var(--gold) / 0.4);
-    transform: translateY(-1px);
-  }
-
-  /* Amount preset chip */
-  .amount-chip {
-    @apply px-4 py-2 rounded-full border cursor-pointer transition-all duration-200 font-semibold text-sm;
-    border-color: oklch(var(--border));
-    background: oklch(var(--muted) / 0.5);
-    color: oklch(var(--muted-foreground));
-  }
-  .amount-chip:hover, .amount-chip.selected {
-    border-color: oklch(var(--gold));
-    background: oklch(var(--gold) / 0.15);
-    color: oklch(var(--gold));
+  .marquee-text {
+    display: inline-block;
+    animation: marquee 18s linear infinite;
+    white-space: nowrap;
   }
 
   /* Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: oklch(var(--background));
+    background: #f5f5f5;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(var(--border));
+    background: #cccccc;
     border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: oklch(var(--gold-dim));
   }
 }
 
 @layer utilities {
   .text-gold { color: oklch(var(--gold)); }
-  .text-gold-bright { color: oklch(var(--gold-bright)); }
   .bg-gold { background-color: oklch(var(--gold)); }
   .border-gold { border-color: oklch(var(--gold)); }
-  .bg-navy-deep { background-color: oklch(var(--navy-deep)); }
-  .bg-navy-mid { background-color: oklch(var(--navy-mid)); }
-  .text-success { color: oklch(var(--green-win)); }
-  .text-battle-red { color: oklch(var(--red-battle)); }
-  .bg-success { background-color: oklch(var(--green-win)); }
+  .text-green-cash { color: #16a34a; }
+  .bg-green-cash { background-color: #16a34a; }
+  .text-blue-accent { color: #2563eb; }
 }
